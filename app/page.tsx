@@ -1,13 +1,18 @@
-import { AnimatedBlobs } from '@/components/AnimatedBlobs'
-import { AgitateSection } from '@/components/AgitateSection'
-import { ClosingCTA } from '@/components/ClosingCTA'
-import { Footer } from '@/components/Footer'
-import { Hero } from '@/components/Hero'
-import { ProcessSection } from '@/components/ProcessSection'
-import { ProofSection } from '@/components/ProofSection'
-import { RevealSection } from '@/components/RevealSection'
-import { ServicesGrid } from '@/components/ServicesGrid'
+import { ArrowUpRight, Check, Circle } from 'lucide-react'
+import { AutomationScene } from '@/components/AutomationScene'
 
-export default function Page() {
-  return <main><AnimatedBlobs /><Hero /><AgitateSection /><RevealSection /><ServicesGrid /><ProcessSection /><ProofSection /><ClosingCTA /><Footer /></main>
-}
+const services = ['Lead capture and qualification', 'CRM and sales operations', 'Invoicing and reporting', 'Customer support systems', 'Internal knowledge workflows', 'Custom integrations']
+const steps = [['01', 'Map the mess', 'We find the repeated work, the handoffs, and the costly gaps.'], ['02', 'Build the machine', 'We connect your tools into a system that runs with intention.'], ['03', 'Make it yours', 'Your team gets a clear operating layer, not another tool to babysit.']]
+
+export default function Page() { return <main>
+  <header className="topbar"><a className="wordmark" href="#top">THE AUTOMATION GUYS<span>///</span></a><nav><a href="#systems">Systems</a><a href="#method">Method</a><a href="#contact">Start a project</a></nav></header>
+  <section className="hero" id="top"><div className="hero-copy"><p className="eyebrow"><span>AG / 2026</span> OPERATIONS, REWIRED</p><h1>Your business should<br /><em>run without you.</em></h1><p className="lede">We turn the manual work slowing ambitious teams down into an intelligent operating system.</p><a className="button" href="#contact">Find your bottleneck <ArrowUpRight size={16} /></a><div className="hero-note"><Circle size={10} fill="currentColor" /> Built for teams who are done stitching things together</div></div><AutomationScene /></section>
+  <section className="marquee"><span>MANUAL WORK IN</span><b>→</b><span>AUTOMATED SYSTEM OUT</span><b>→</b><span>MANUAL WORK IN</span></section>
+  <section className="friction section"><div className="section-head"><p className="eyebrow">01 / THE FRICTION</p><h2>The work between<br /><em>the work</em> is costing you.</h2></div><div className="friction-list">{['Copying leads from inbox to CRM', 'Chasing invoices and status updates', 'Answering the same questions again', 'Keeping five tools in sync by hand'].map((x, i) => <div className="friction-row" key={x}><span>0{i + 1}</span><p>{x}</p><span>↗</span></div>)}</div></section>
+  <section className="statement"><p className="eyebrow">02 / THE SHIFT</p><h2>We replace the<br /><em>busywork layer.</em></h2><p>Not with a dashboard. With a connected system that notices, decides, and moves work forward while you focus on the part only you can do.</p></section>
+  <section className="systems section" id="systems"><div className="section-head split"><div><p className="eyebrow">03 / WHAT WE BUILD</p><h2>Systems that<br /><em>pull their weight.</em></h2></div><p>Start with one constraint. Leave with an operating layer built around how your team actually works.</p></div><div className="service-grid">{services.map((service, i) => <article key={service}><span>0{i + 1}</span><h3>{service}</h3><Check size={19} /></article>)}</div></section>
+  <section className="method section" id="method"><p className="eyebrow">04 / THE METHOD</p><h2>Clarity before<br /><em>complexity.</em></h2><div className="step-grid">{steps.map(([number, title, copy]) => <article key={number}><span className="step-number">{number}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></section>
+  <section className="proof section"><div className="proof-card"><p className="eyebrow">05 / THE OUTCOME</p><h2>More signal.<br /><em>Less scramble.</em></h2><div className="metrics"><div><strong>40%</strong><span>less admin overhead</span></div><div><strong>2.4×</strong><span>faster lead response</span></div><div><strong>1</strong><span>system your team trusts</span></div></div></div></section>
+  <section className="contact section" id="contact"><p className="eyebrow">06 / YOUR NEXT MOVE</p><h2>Find the work<br />you can <em>delete.</em></h2><p>Tell us where the friction lives. We&apos;ll show you what can run without you.</p><a className="button button-orange" href="mailto:hello@theautomationguys.com">Start the conversation <ArrowUpRight size={16} /></a></section>
+  <footer><a className="wordmark" href="#top">THE AUTOMATION GUYS<span>///</span></a><p>© 2026 / Intelligent systems for ambitious teams.</p><a href="#top">Back to top ↑</a></footer>
+</main> }
