@@ -13,7 +13,7 @@ import { ClosingCTA } from '@/components/ClosingCTA'
 import { Footer } from '@/components/Footer'
 import { DevtoolsEasterEgg } from '@/components/DevtoolsEasterEgg'
 
-// Dynamic import for heavy GSAP video pin reveal component to keep initial load lightweight
+// Dynamic import for heavy GSAP video pin reveal component
 const HeroScrollVideoReveal = dynamic(
   () =>
     import('@/components/ui/hero-scroll-video-pin-reveal').then(
@@ -32,7 +32,7 @@ export default function Page() {
 
   return (
     <main
-      className="min-h-screen bg-[#0A0A0A] text-[#F2F2F0] antialiased selection:bg-[#3B82F6] selection:text-white"
+      className="min-h-screen bg-[var(--bg-color)] bg-grid-pattern text-[var(--text-primary)] antialiased selection:bg-[#3B82F6] selection:text-white"
       id="top"
     >
       <DevtoolsEasterEgg />
@@ -42,7 +42,7 @@ export default function Page() {
       <FrictionSection />
       <ShiftSection />
 
-      {/* Kinetic Scroller Pin Reveal Section (Exclusive Element Focus) */}
+      {/* Kinetic Scroller Pin Reveal Section */}
       <HeroScrollVideoReveal
         headingText={
           <>

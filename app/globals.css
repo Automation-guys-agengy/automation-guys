@@ -9,7 +9,7 @@
   --text-secondary: #475569;
   --accent-color: #2563EB;
   --accent-glow: rgba(37, 99, 235, 0.2);
-  --grid-color: rgba(0, 0, 0, 0.055);
+  --grid-color: rgba(0, 0, 0, 0.09);
 }
 
 html.dark {
@@ -20,7 +20,7 @@ html.dark {
   --text-secondary: #8C8C88;
   --accent-color: #3B82F6;
   --accent-glow: rgba(59, 130, 246, 0.2);
-  --grid-color: rgba(255, 255, 255, 0.045);
+  --grid-color: rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -61,7 +61,7 @@ body {
   background: var(--accent-color);
 }
 
-/* Global Background Gridlines Pattern */
+/* Global High-Visibility Background Gridlines Pattern */
 .bg-grid-pattern {
   background-size: 40px 40px;
   background-image: 
