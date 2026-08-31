@@ -136,11 +136,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           pin: true,
           pinSpacing: true,
           anticipatePin: 1,
-          onRefresh: (self) => {
+          onRefresh: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
-          onToggle: (self) => {
+          onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
@@ -167,11 +167,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           pin: true,
           pinSpacing: true,
           anticipatePin: 1,
-          onRefresh: (self) => {
+          onRefresh: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
-          onToggle: (self) => {
+          onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
@@ -198,11 +198,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           pin: true,
           pinSpacing: true,
           anticipatePin: 1,
-          onRefresh: (self) => {
+          onRefresh: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
-          onToggle: (self) => {
+          onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
           },
