@@ -11,12 +11,13 @@ export function SectionDivider({
   text = "SYSTEM OPTIMIZED /// ZERO FRICTION /// AUTOPILOT ENGAGED /// ",
   reverse = false
 }: SectionDividerProps) {
-  // Duplicate text multiple times to ensure seamless infinite scroll
-  const marqueeText = Array(12).fill(text).join(" ")
+  const marqueeText = Array(6).fill(text).join(" ")
 
   return (
-    <div className="relative w-full py-10 flex flex-col items-center justify-center overflow-hidden bg-transparent pointer-events-none">
-      
+    <div
+      className="relative w-full py-10 flex flex-col items-center justify-center overflow-hidden bg-transparent pointer-events-none"
+      aria-hidden="true"
+    >
       {/* Ticker tape */}
       <div className="relative z-10 w-full bg-[#0A0A0A]/40 backdrop-blur-md py-3 overflow-hidden flex shadow-[0_0_30px_rgba(0,0,0,0.4)]">
         {/* Top glowing line */}
@@ -27,9 +28,10 @@ export function SectionDivider({
           transition={{
             repeat: Infinity,
             ease: "linear",
-            duration: 35,
+            duration: 30,
           }}
           className="flex whitespace-nowrap text-[#3B82F6] font-mono text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-80"
+          style={{ willChange: 'transform' }}
         >
           <span className="pr-8">{marqueeText}</span>
           <span className="pr-8">{marqueeText}</span>
@@ -41,3 +43,4 @@ export function SectionDivider({
     </div>
   )
 }
+
