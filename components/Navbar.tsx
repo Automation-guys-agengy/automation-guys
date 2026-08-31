@@ -21,24 +21,23 @@ export function Navbar() {
   }, [])
 
   return (
-    <header
-      className={clsx(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out flex justify-center",
-        scrolled ? "py-4 px-4 sm:px-6" : "py-0 px-0"
-      )}
-    >
+    <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 pointer-events-none">
+      {/* 
+        Fixed layout properties (max-w-5xl, px, py) eliminate layout thrashing & scroll lag.
+        Only compositing properties (background, border, shadow, backdrop-filter) are transitioned.
+      */}
       <div
         className={clsx(
-          "relative flex items-center justify-between transition-all duration-500 ease-out",
+          "relative flex items-center justify-between w-full max-w-5xl rounded-full px-6 py-3 pointer-events-auto transition-all duration-300",
           scrolled 
-            ? "w-full max-w-5xl rounded-full bg-[var(--surface-color)]/80 backdrop-blur-2xl border border-[var(--border-color)]/50 shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-6 py-3" 
-            : "w-full max-w-7xl bg-[var(--surface-color)]/95 backdrop-blur-xl border-b border-[var(--border-color)] px-6 sm:px-8 lg:px-12 py-4"
+            ? "bg-[var(--surface-color)]/50 backdrop-blur-xl border border-[var(--border-color)] shadow-[0_8px_32px_rgba(0,0,0,0.3)]" 
+            : "bg-[var(--surface-color)]/20 backdrop-blur-md border border-[var(--border-color)]/40 shadow-sm"
         )}
       >
-        {/* Scroll Progress Bar - Only visible when not scrolled or integrated nicely */}
+        {/* Scroll Progress Bar */}
         {!scrolled && (
           <motion.div
-            className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#3B82F6] origin-left z-50 shadow-[0_0_10px_#3B82F6]"
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[90%] h-[2px] bg-[#3B82F6] rounded-full z-50 shadow-[0_0_10px_#3B82F6] opacity-70"
             style={{ scaleX }}
           />
         )}
@@ -58,7 +57,7 @@ export function Navbar() {
             />
           </div>
 
-          <span className={clsx("leading-none transition-all duration-300", scrolled && "hidden sm:block")}>
+          <span className="leading-none transition-all duration-300 hidden sm:block">
             THE AUTOMATION GUYS
           </span>
           <span className="text-[#3B82F6] group-hover:translate-x-1 transition-transform leading-none duration-300">
