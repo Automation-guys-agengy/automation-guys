@@ -12,6 +12,8 @@ import { OutcomeSection } from '@/components/OutcomeSection'
 import { ClosingCTA } from '@/components/ClosingCTA'
 import { Footer } from '@/components/Footer'
 import { DevtoolsEasterEgg } from '@/components/DevtoolsEasterEgg'
+import { SectionDivider } from '@/components/ui/SectionDivider'
+import { LiveDemoSection } from '@/components/ui/LiveDemoSection'
 
 // Dynamic import for heavy GSAP video pin reveal component
 const HeroScrollVideoReveal = dynamic(
@@ -39,9 +41,15 @@ export default function Page() {
       <Navbar />
       <Hero />
       <TrustStrip />
+      
+      <SectionDivider text="IDENTIFYING BOTTLENECKS /// " />
       <FrictionSection />
       <ShiftSection />
 
+      <SectionDivider text="LIVE DEMO /// " reverse={false} />
+      <LiveDemoSection />
+
+      <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
       {/* Kinetic Scroller Pin Reveal Section */}
       <HeroScrollVideoReveal
         headingText={
@@ -54,8 +62,11 @@ export default function Page() {
         subText="And your operations continue running 24/7 without manual intervention..."
       />
 
+      <SectionDivider text="AUTOPILOT ENGAGED /// " />
       <SystemsGrid />
       <MethodSection />
+      
+      <SectionDivider text="MEASURABLE IMPACT /// " reverse={true} />
       <OutcomeSection />
       <ClosingCTA />
       <Footer />
