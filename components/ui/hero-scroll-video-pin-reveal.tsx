@@ -50,11 +50,10 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    // Ensure video plays smoothly
+    // We will control video playback using ScrollTrigger instead of playing it unconditionally
     if (videoRef.current) {
       videoRef.current.defaultMuted = true;
       videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {});
     }
 
     // Word split kinetic reveal animation fallback logic
@@ -143,6 +142,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
+            if (self.isActive) {
+              videoRef.current?.play().catch(() => {});
+            } else {
+              videoRef.current?.pause();
+            }
           },
         },
       });
@@ -174,6 +178,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
+            if (self.isActive) {
+              videoRef.current?.play().catch(() => {});
+            } else {
+              videoRef.current?.pause();
+            }
           },
         },
       });
@@ -205,6 +214,11 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
           onToggle: (self: any) => {
             if (self.spacer) self.spacer.style.backgroundColor = '#0A0A0A';
             if (self.pin) self.pin.style.backgroundColor = '#0A0A0A';
+            if (self.isActive) {
+              videoRef.current?.play().catch(() => {});
+            } else {
+              videoRef.current?.pause();
+            }
           },
         },
       });
@@ -308,8 +322,8 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
 
             <div
               ref={videoBoxRef}
-              className="relative w-full h-full overflow-hidden flex justify-center items-center bg-[#0A0A0A] will-change-[clip-path]"
-              style={{ backgroundColor: '#0A0A0A', zIndex: 2 }}
+              className="relative w-full h-full overflow-hidden flex justify-center items-center bg-[#0A0A0A]"
+              style={{ backgroundColor: '#0A0A0A', zIndex: 2, willChange: 'clip-path', transform: 'translateZ(0)' }}
             >
               {/* Rotating Circular Text Badge */}
               {badgeImgSrc && (

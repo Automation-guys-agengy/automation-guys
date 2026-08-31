@@ -849,6 +849,10 @@ export function BlackHoleHeroSection({
     }
 
     function dropTargets() {
+      if (!gl || gl.isContextLost()) {
+        scene = null; histA = null; histB = null; bloomA = null; bloomB = null; settled = 0;
+        return;
+      }
       for (const t of [scene, histA, histB, bloomA, bloomB]) {
         if (!t) continue;
         gl!.deleteTexture(t.tex);
@@ -1072,9 +1076,13 @@ export function BlackHoleHeroSection({
 
     /* --- resize / visibility ---------------------------------------------- */
 
+    let resizeTimer: any = null;
     const ro = new ResizeObserver(() => {
-      resize();
-      if (reduced || props.current.paused) settle(16);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        if (reduced || props.current.paused) settle(16);
+      }, 150);
     });
     ro.observe(host);
 
@@ -1119,9 +1127,11 @@ export function BlackHoleHeroSection({
       canvas.removeEventListener("webglcontextlost", onLost);
       canvas.removeEventListener("webglcontextrestored", onRestored);
       dropTargets();
-      if (vbo) gl.deleteBuffer(vbo);
-      for (const p of [sceneProg, blendProg, brightProg, blurProg, compProg]) {
-        if (p) gl.deleteProgram(p.program);
+      if (gl && !gl.isContextLost()) {
+        if (vbo) gl.deleteBuffer(vbo);
+        for (const p of [sceneProg, blendProg, brightProg, blurProg, compProg]) {
+          if (p) gl.deleteProgram(p.program);
+        }
       }
     };
   }, []);
