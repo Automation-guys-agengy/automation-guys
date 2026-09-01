@@ -341,8 +341,7 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
                 muted
                 loop
                 playsInline
-                preload="auto"
-                crossOrigin="anonymous"
+                preload="metadata"
                 className="w-full h-full object-cover bg-[#0A0A0A]"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', backgroundColor: '#0A0A0A' }}
               >

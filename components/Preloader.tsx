@@ -7,7 +7,11 @@ export function PreloaderDismiss() {
     const loader = document.getElementById('preloader')
     if (!loader) return
 
+    let dismissed = false
+
     const dismiss = () => {
+      if (dismissed) return
+      dismissed = true
       // Add exit animation class
       loader.classList.add('preloader-exit')
       // Remove from DOM after animation completes
@@ -17,17 +21,22 @@ export function PreloaderDismiss() {
       }, 700)
     }
 
-    // Wait for window.load — fires ONLY after ALL resources are fully loaded
-    // (all images, fonts, scripts, iframes, stylesheets, etc.)
+    // MAX TIMEOUT: Never wait more than 10 seconds regardless of load state.
+    // This prevents the loader from hanging forever if a resource (e.g. video) fails.
+    const maxTimeout = setTimeout(dismiss, 10000)
+
+    // Ideal case: wait for window.load (all resources fully loaded)
     if (document.readyState === 'complete') {
-      // Already loaded (e.g. client-side navigation), small delay for polish
+      clearTimeout(maxTimeout)
       setTimeout(dismiss, 500)
     } else {
       window.addEventListener('load', () => {
-        // Give a tiny extra buffer for dynamic components to finish rendering
+        clearTimeout(maxTimeout)
         setTimeout(dismiss, 500)
       })
     }
+
+    return () => clearTimeout(maxTimeout)
   }, [])
 
   return null
