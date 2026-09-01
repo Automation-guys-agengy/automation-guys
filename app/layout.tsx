@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { CustomCursor } from '@/components/CustomCursor'
+import { Preloader } from '@/components/Preloader'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -126,6 +127,7 @@ export default function RootLayout({
             className="fixed inset-0 pointer-events-none bg-grid-pattern z-0 opacity-100"
             aria-hidden="true"
           />
+          <Preloader />
           <CustomCursor />
           <div className="relative z-10">{children}</div>
           {process.env.NODE_ENV === 'production' && <Analytics />}
