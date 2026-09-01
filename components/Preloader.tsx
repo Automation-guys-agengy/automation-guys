@@ -14,9 +14,10 @@ export function PreloaderDismiss() {
       dismissed = true
       // Add exit animation class
       loader.classList.add('preloader-exit')
-      // Remove from DOM after animation completes
+      // Hide from DOM after animation completes instead of removing
+      // to prevent React hydration errors (NotFoundError: Failed to execute 'removeChild')
       setTimeout(() => {
-        loader.remove()
+        loader.style.display = 'none'
         document.body.style.overflow = ''
       }, 700)
     }
