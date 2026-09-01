@@ -168,7 +168,7 @@ export default function RootLayout({
           .pl-bar-fill {
             height: 100%; width: 0; background: #3B82F6;
             box-shadow: 0 0 10px #3B82F6;
-            animation: pl-progress 2.5s ease-in-out forwards;
+            animation: pl-progress 8s cubic-bezier(0.1, 0.5, 0.3, 1) forwards;
           }
           @keyframes pl-spin { to { transform: rotate(360deg); } }
           @keyframes pl-pulse {

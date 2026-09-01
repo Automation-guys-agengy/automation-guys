@@ -3,22 +3,11 @@
 import dynamic from 'next/dynamic'
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
-import { LazySection } from '@/components/LazySection'
+import { TrustStrip } from '@/components/TrustStrip'
+import { SectionDivider } from '@/components/ui/SectionDivider'
 
-// === STEP 1: Above the fold — loads immediately ===
-// Navbar + Hero are eagerly imported above
-
-// === STEP 2: Just below the fold — light components, lazy mounted ===
-const TrustStrip = dynamic(
-  () => import('@/components/TrustStrip').then((m) => m.TrustStrip),
-  { ssr: false }
-)
-const SectionDivider = dynamic(
-  () => import('@/components/ui/SectionDivider').then((m) => m.SectionDivider),
-  { ssr: false }
-)
-
-// === STEP 3: Mid-page — medium-weight sections ===
+// Dynamic imports for code splitting — JS bundles load in parallel
+// but all mount immediately so the full page is ready before loader dismisses
 const FrictionSection = dynamic(
   () => import('@/components/FrictionSection').then((m) => m.FrictionSection),
   { ssr: false }
@@ -27,14 +16,10 @@ const ShiftSection = dynamic(
   () => import('@/components/ShiftSection').then((m) => m.ShiftSection),
   { ssr: false }
 )
-
-// === STEP 4: Heavy interactive sections ===
 const LiveDemoSection = dynamic(
   () => import('@/components/ui/LiveDemoSection').then((m) => m.LiveDemoSection),
   { ssr: false }
 )
-
-// === STEP 5: Heaviest — GSAP video pin reveal ===
 const HeroScrollVideoReveal = dynamic(
   () =>
     import('@/components/ui/hero-scroll-video-pin-reveal').then(
@@ -42,8 +27,6 @@ const HeroScrollVideoReveal = dynamic(
     ),
   { ssr: false }
 )
-
-// === STEP 6: Lower page sections ===
 const SystemsGrid = dynamic(
   () => import('@/components/SystemsGrid').then((m) => m.SystemsGrid),
   { ssr: false }
@@ -82,58 +65,38 @@ export default function Page() {
       className="min-h-screen bg-[var(--bg-color)] bg-grid-pattern text-[var(--text-primary)] antialiased selection:bg-[#3B82F6] selection:text-white"
       id="top"
     >
-      {/* ── STEP 1: Above the fold (instant) ── */}
       <DevtoolsEasterEgg />
       <Navbar />
       <Hero />
+      <TrustStrip />
+      
+      <SectionDivider text="IDENTIFYING BOTTLENECKS /// " />
+      <FrictionSection />
+      <ShiftSection />
 
-      {/* ── STEP 2: Just below fold — loads when within 600px ── */}
-      <LazySection rootMargin="600px" minHeight="80px">
-        <TrustStrip />
-      </LazySection>
+      <SectionDivider text="LIVE DEMO /// " reverse={false} />
+      <LiveDemoSection />
 
-      {/* ── STEP 3: Mid-page sections ── */}
-      <LazySection rootMargin="400px" minHeight="600px">
-        <SectionDivider text="IDENTIFYING BOTTLENECKS /// " />
-        <FrictionSection />
-        <ShiftSection />
-      </LazySection>
+      <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
+      <HeroScrollVideoReveal
+        headingText={
+          <>
+            Step into autonomous operations.<br />
+            Intelligent systems tell the story.
+          </>
+        }
+        tags={customTags}
+        subText="And your operations continue running 24/7 without manual intervention..."
+      />
 
-      {/* ── STEP 4: Live Demo — heavy interactive ── */}
-      <LazySection rootMargin="300px" minHeight="600px">
-        <SectionDivider text="LIVE DEMO /// " reverse={false} />
-        <LiveDemoSection />
-      </LazySection>
-
-      {/* ── STEP 5: GSAP Video Reveal — heaviest component ── */}
-      <LazySection rootMargin="300px" minHeight="800px">
-        <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
-        <HeroScrollVideoReveal
-          headingText={
-            <>
-              Step into autonomous operations.<br />
-              Intelligent systems tell the story.
-            </>
-          }
-          tags={customTags}
-          subText="And your operations continue running 24/7 without manual intervention..."
-        />
-      </LazySection>
-
-      {/* ── STEP 6: Lower page ── */}
-      <LazySection rootMargin="300px" minHeight="600px">
-        <SectionDivider text="AUTOPILOT ENGAGED /// " />
-        <SystemsGrid />
-        <MethodSection />
-      </LazySection>
-
-      {/* ── STEP 7: Bottom — outcomes, CTA, footer ── */}
-      <LazySection rootMargin="300px" minHeight="400px">
-        <SectionDivider text="MEASURABLE IMPACT /// " reverse={true} />
-        <OutcomeSection />
-        <ClosingCTA />
-        <Footer />
-      </LazySection>
+      <SectionDivider text="AUTOPILOT ENGAGED /// " />
+      <SystemsGrid />
+      <MethodSection />
+      
+      <SectionDivider text="MEASURABLE IMPACT /// " reverse={true} />
+      <OutcomeSection />
+      <ClosingCTA />
+      <Footer />
     </main>
   )
 }
