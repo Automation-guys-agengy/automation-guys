@@ -693,7 +693,7 @@ export function BlackHoleHeroSection({
       canvas!.style.display = "none";
     }
 
-    if (!gl) {
+    if (!gl || gl.isContextLost()) {
       giveUp("unsupported");
       return;
     }
