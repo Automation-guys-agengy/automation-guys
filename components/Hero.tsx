@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { ArrowRight, Terminal } from 'lucide-react'
+import { DeferMount } from '@/components/DeferMount'
 
 // Dynamically import WebGL BlackHole shader
 const BlackHoleHeroSection = dynamic(
@@ -20,35 +21,37 @@ export function Hero() {
       aria-label="Hero Section"
     >
       <div className="absolute inset-0 z-0">
-        <BlackHoleHeroSection
-          distance={24}
-          elevation={-5.5}
-          azimuth={0}
-          fov={42}
-          diskInner={3}
-          diskOuter={16}
-          diskThickness={0.26}
-          diskDensity={1.1}
-          brightness={1.2}
-          spinSpeed={0.05}
-          grain={0.48}
-          doppler={0.35}
-          hotColor="#FFF3DE"
-          midColor="#3B82F6"
-          coolColor="#1E3A8A"
-          starBrightness={0.4}
-          glow={1.0}
-          exposure={0.9}
-          vignette={0.3}
-          steps={140}
-          resolution={0.7}
-          maxDpr={1.2}
-          focus={[0.72, 0.46]}
-          scrim="left"
-          scrimStrength={0.88}
-          paused={false}
-          className="w-full h-full"
-        />
+        <DeferMount delay={100}>
+          <BlackHoleHeroSection
+            distance={24}
+            elevation={-5.5}
+            azimuth={0}
+            fov={42}
+            diskInner={3}
+            diskOuter={16}
+            diskThickness={0.26}
+            diskDensity={1.1}
+            brightness={1.2}
+            spinSpeed={0.05}
+            grain={0.48}
+            doppler={0.35}
+            hotColor="#FFF3DE"
+            midColor="#3B82F6"
+            coolColor="#1E3A8A"
+            starBrightness={0.4}
+            glow={1.0}
+            exposure={0.9}
+            vignette={0.3}
+            steps={140}
+            resolution={0.7}
+            maxDpr={1.2}
+            focus={[0.72, 0.46]}
+            scrim="left"
+            scrimStrength={0.88}
+            paused={false}
+            className="w-full h-full"
+          />
+        </DeferMount>
       </div>
 
       {/* Hero Text Directly Overlayed */}
