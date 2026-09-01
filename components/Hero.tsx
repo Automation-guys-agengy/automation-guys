@@ -45,7 +45,7 @@ export function Hero() {
         focus={[0.72, 0.46]}
         scrim="left"
         scrimStrength={0.88}
-          paused={true} // Static mode: renders crisp black hole once with ZERO animation loop / 0% GPU load
+          paused={false} // Dynamic mode: animated black hole
           className="w-full min-h-[calc(100vh-80px)] py-16 lg:py-24"
         >
         {/* Hero Text Directly Overlayed on Static Black Hole Backdrop */}
