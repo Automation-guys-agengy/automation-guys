@@ -1146,7 +1146,7 @@ export function BlackHoleHeroSection({
     >
       {/* Production Fallback: CSS Gradient if WebGL fails or context is lost */}
       <div 
-        className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 group-data-[webgl=failed]:opacity-100"
+        className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 group-[[data-webgl]]:opacity-100"
         style={{
           background: 'radial-gradient(circle at center, #1E3A8A 0%, #0A0A0A 50%, #0A0A0A 100%)'
         }}
