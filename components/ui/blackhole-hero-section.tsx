@@ -673,7 +673,6 @@ export function BlackHoleHeroSection({
       antialias: false,
       depth: false,
       stencil: false,
-      powerPreference: "high-performance",
       preserveDrawingBuffer: false,
     };
     const gl = (canvas.getContext("webgl2", opts) ||
