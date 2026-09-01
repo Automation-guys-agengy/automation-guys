@@ -15,12 +15,16 @@ export function PreloaderDismiss() {
       }, 700)
     }
 
-    // Wait for full page load, then dismiss
-    if (document.readyState === 'complete') {
-      // Small delay so it doesn't flash away instantly on cache hits
-      setTimeout(dismiss, 400)
+    // With progressive loading, the initial paint is fast.
+    // Dismiss once the DOM is interactive (no need to wait for full load).
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      requestAnimationFrame(() => setTimeout(dismiss, 200))
     } else {
-      window.addEventListener('load', () => setTimeout(dismiss, 300))
+      const onReady = () => {
+        requestAnimationFrame(() => setTimeout(dismiss, 200))
+      }
+      document.addEventListener('DOMContentLoaded', onReady)
+      return () => document.removeEventListener('DOMContentLoaded', onReady)
     }
   }, [])
 
