@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { ArrowRight, Terminal } from 'lucide-react'
-import { DeferMount } from '@/components/DeferMount'
 
 // Dynamically import WebGL BlackHole shader
 const BlackHoleHeroSection = dynamic(
@@ -20,33 +19,32 @@ export function Hero() {
       className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden border-b border-[#262626] bg-[#0A0A0A]"
       aria-label="Hero Section"
     >
-      <DeferMount delay={0}>
-        <BlackHoleHeroSection
-          distance={24}
-          elevation={-5.5}
-          azimuth={0}
-          fov={42}
-          diskInner={3}
-          diskOuter={16}
-          diskThickness={0.26}
-          diskDensity={1.1}
-          brightness={1.2}
-          spinSpeed={0}
-          grain={0.48}
-          doppler={0.35}
-          hotColor="#FFF3DE"
-          midColor="#3B82F6"
-          coolColor="#1E3A8A"
-          starBrightness={0.4}
-          glow={1.0}
-          exposure={0.9}
-          vignette={0.3}
-          steps={140}
-          resolution={0.7}
-          maxDpr={1.2}
-          focus={[0.72, 0.46]}
-          scrim="left"
-          scrimStrength={0.88}
+      <BlackHoleHeroSection
+        distance={24}
+        elevation={-5.5}
+        azimuth={0}
+        fov={42}
+        diskInner={3}
+        diskOuter={16}
+        diskThickness={0.26}
+        diskDensity={1.1}
+        brightness={1.2}
+        spinSpeed={0}
+        grain={0.48}
+        doppler={0.35}
+        hotColor="#FFF3DE"
+        midColor="#3B82F6"
+        coolColor="#1E3A8A"
+        starBrightness={0.4}
+        glow={1.0}
+        exposure={0.9}
+        vignette={0.3}
+        steps={140}
+        resolution={0.7}
+        maxDpr={1.2}
+        focus={[0.72, 0.46]}
+        scrim="left"
+        scrimStrength={0.88}
           paused={true} // Static mode: renders crisp black hole once with ZERO animation loop / 0% GPU load
           className="w-full min-h-[calc(100vh-80px)] py-16 lg:py-24"
         >
@@ -106,8 +104,7 @@ export function Hero() {
             </motion.div>
           </div>
         </div>
-        </BlackHoleHeroSection>
-      </DeferMount>
+      </BlackHoleHeroSection>
     </section>
   )
 }
