@@ -28,11 +28,13 @@ export function PreloaderDismiss() {
     // Ideal case: wait for window.load (all resources fully loaded)
     if (document.readyState === 'complete') {
       clearTimeout(maxTimeout)
-      setTimeout(dismiss, 500)
+      setTimeout(dismiss, 2000)
     } else {
       window.addEventListener('load', () => {
         clearTimeout(maxTimeout)
-        setTimeout(dismiss, 500)
+        // Give a generous 2s buffer after load to completely hide the massive 
+        // JS hydration freeze (Three.js WebGL compile, GSAP initialization, etc)
+        setTimeout(dismiss, 2000)
       })
     }
 
@@ -41,3 +43,4 @@ export function PreloaderDismiss() {
 
   return null
 }
+
