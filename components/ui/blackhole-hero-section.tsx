@@ -1141,9 +1141,16 @@ export function BlackHoleHeroSection({
   return (
     <div
       ref={hostRef}
-      className={`relative isolate h-full w-full overflow-hidden bg-black ${className}`}
+      className={`group relative isolate h-full w-full overflow-hidden bg-black ${className}`}
       {...rest}
     >
+      {/* Production Fallback: CSS Gradient if WebGL fails or context is lost */}
+      <div 
+        className="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 group-data-[webgl=failed]:opacity-100"
+        style={{
+          background: 'radial-gradient(circle at center, #1E3A8A 0%, #0A0A0A 50%, #0A0A0A 100%)'
+        }}
+      />
       <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
       {children ? <div className="relative z-10 h-full w-full">{children}</div> : null}
     </div>
