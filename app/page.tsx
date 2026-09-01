@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
 import { TrustStrip } from '@/components/TrustStrip'
 import { SectionDivider } from '@/components/ui/SectionDivider'
+import { DeferMount } from '@/components/DeferMount'
 
 // Dynamic imports for code splitting — JS bundles load in parallel
 // but all mount immediately so the full page is ready before loader dismisses
@@ -70,33 +71,43 @@ export default function Page() {
       <Hero />
       <TrustStrip />
       
-      <SectionDivider text="IDENTIFYING BOTTLENECKS /// " />
-      <FrictionSection />
-      <ShiftSection />
+      <DeferMount delay={100}>
+        <SectionDivider text="IDENTIFYING BOTTLENECKS /// " />
+        <FrictionSection />
+        <ShiftSection />
+      </DeferMount>
 
-      <SectionDivider text="LIVE DEMO /// " reverse={false} />
-      <LiveDemoSection />
+      <DeferMount delay={200}>
+        <SectionDivider text="LIVE DEMO /// " reverse={false} />
+        <LiveDemoSection />
+      </DeferMount>
 
-      <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
-      <HeroScrollVideoReveal
-        headingText={
-          <>
-            Step into autonomous operations.<br />
-            Intelligent systems tell the story.
-          </>
-        }
-        tags={customTags}
-        subText="And your operations continue running 24/7 without manual intervention..."
-      />
+      <DeferMount delay={300}>
+        <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
+        <HeroScrollVideoReveal
+          headingText={
+            <>
+              Step into autonomous operations.<br />
+              Intelligent systems tell the story.
+            </>
+          }
+          tags={customTags}
+          subText="And your operations continue running 24/7 without manual intervention..."
+        />
+      </DeferMount>
 
-      <SectionDivider text="AUTOPILOT ENGAGED /// " />
-      <SystemsGrid />
-      <MethodSection />
+      <DeferMount delay={400}>
+        <SectionDivider text="AUTOPILOT ENGAGED /// " />
+        <SystemsGrid />
+        <MethodSection />
+      </DeferMount>
       
-      <SectionDivider text="MEASURABLE IMPACT /// " reverse={true} />
-      <OutcomeSection />
-      <ClosingCTA />
-      <Footer />
+      <DeferMount delay={500}>
+        <SectionDivider text="MEASURABLE IMPACT /// " reverse={true} />
+        <OutcomeSection />
+        <ClosingCTA />
+        <Footer />
+      </DeferMount>
     </main>
   )
 }
