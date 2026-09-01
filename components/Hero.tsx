@@ -48,7 +48,7 @@ export function Hero() {
             focus={[0.72, 0.46]}
             scrim="left"
             scrimStrength={0.88}
-            paused={false}
+            paused={true}
             className="w-full h-full"
           />
         </DeferMount>
