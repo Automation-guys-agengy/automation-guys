@@ -38,7 +38,7 @@ export const HeroScrollVideoReveal: React.FC<HeroScrollVideoRevealProps> = ({
   ),
   tags = DEFAULT_TAGS,
   subText = 'And your operations continue running 24/7 without manual intervention...',
-  videoSrc = 'https://res.cloudinary.com/dsuwzuaxp/video/upload/856381-hd_1920_1080_30fps_gsq11b.mp4',
+  videoSrc = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', // Replaced failing Cloudinary URL (401 Unauthorized) with working placeholder
   badgeImgSrc = 'https://i.ibb.co/kgFKP37B/rotate-text.png',
   className = '',
 }) => {
