@@ -1131,8 +1131,6 @@ export function BlackHoleHeroSection({
         for (const p of [sceneProg, blendProg, brightProg, blurProg, compProg]) {
           if (p) gl.deleteProgram(p.program);
         }
-        const ext = gl.getExtension('WEBGL_lose_context');
-        if (ext) ext.loseContext();
       }
     };
   }, []);
