@@ -3,9 +3,11 @@
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { ArrowRight, Terminal } from 'lucide-react'
+import { StarField } from '@/components/StarField'
 import { DeferMount } from '@/components/DeferMount'
 
-// Dynamically import WebGL BlackHole shader
+// Dynamically import the WebGL black hole — deferred so shader compiles
+// AFTER the preloader exits (avoids the GPU stall on first paint)
 const BlackHoleHeroSection = dynamic(
   () =>
     import('@/components/ui/blackhole-hero-section').then(
@@ -20,8 +22,10 @@ export function Hero() {
       className="relative min-h-[calc(100vh-80px)] flex items-center overflow-hidden border-b border-[#262626] bg-[#0A0A0A]"
       aria-label="Hero Section"
     >
+      {/* Background layers */}
       <div className="absolute inset-0 z-0">
-        <DeferMount delay={100}>
+        {/* Static black hole — deferred 3 s so shader compiles after preloader exits */}
+        <DeferMount delay={3000}>
           <BlackHoleHeroSection
             distance={24}
             elevation={-5.5}
@@ -32,26 +36,29 @@ export function Hero() {
             diskThickness={0.26}
             diskDensity={1.1}
             brightness={1.2}
-            spinSpeed={0.05}
+            spinSpeed={0}
             grain={0.48}
             doppler={0.35}
             hotColor="#FFF3DE"
             midColor="#3B82F6"
             coolColor="#1E3A8A"
-            starBrightness={0.4}
+            starBrightness={0}
             glow={1.0}
             exposure={0.9}
             vignette={0.3}
-            steps={140}
-            resolution={0.7}
-            maxDpr={1.2}
+            steps={110}
+            resolution={0.6}
+            maxDpr={1.0}
             focus={[0.72, 0.46]}
             scrim="left"
             scrimStrength={0.88}
             paused={true}
-            className="w-full h-full"
+            className="absolute inset-0 w-full h-full"
           />
         </DeferMount>
+
+        {/* Animated twinkling stars layered on top of the black hole */}
+        <StarField count={260} className="z-10" />
       </div>
 
       {/* Hero Text Directly Overlayed */}
