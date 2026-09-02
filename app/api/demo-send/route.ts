@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 /* ------------------------------------------------------------------ */
 /*  Configuration                                                      */
@@ -8,7 +8,7 @@ import { Resend } from 'resend';
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const DEDUPE_WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
-const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // purge stale entries every 15 min
+const CLEANUP_INTERVAL_MS = 15 * 60 * 1000;   // purge stale entries every 15 min
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -57,14 +57,23 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Resend Client (lazy — avoids crash if key is missing)              */
+/*  Gmail SMTP Transporter (lazy — avoids crash if env vars missing)   */
 /* ------------------------------------------------------------------ */
 
-let _resend: Resend | null = null;
-function getResend(): Resend | null {
-  if (!process.env.RESEND_API_KEY) return null;
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
-  return _resend;
+let _transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter | null {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) return null;
+
+  if (!_transporter) {
+    _transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+  }
+  return _transporter;
 }
 
 /* ------------------------------------------------------------------ */
@@ -91,7 +100,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email format.' }, { status: 400 });
     }
 
-    // 4. Disposable domain rejection (O(1) Set lookup)
+    // 4. Disposable domain rejection
     const domain = email.split('@')[1]?.toLowerCase();
     if (domain && DISPOSABLE_DOMAINS.has(domain)) {
       return NextResponse.json(
@@ -133,22 +142,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // 7. Send the email (or mock if no API key)
-    const resend = getResend();
+    // 7. Send via Gmail SMTP (or mock if env vars not set)
+    const transporter = getTransporter();
 
-    if (!resend) {
-      // Dev mode: mock the response so the frontend still works
+    if (!transporter) {
+      // Dev/demo mode: mock so the frontend animation still runs
       emailDedupe.set(normalized, now);
       await new Promise((r) => setTimeout(r, 700));
-      return NextResponse.json({ success: true, message: 'Email sent (mocked — no RESEND_API_KEY).' });
+      return NextResponse.json({
+        success: true,
+        message: 'Email sent (mocked — GMAIL_USER / GMAIL_APP_PASSWORD not set).',
+      });
     }
 
-    const { error } = await resend.emails.send({
-      // ⚠️  Using Resend's pre-verified sender so this works without domain setup.
-      //     Once you verify theautomationguys.com in the Resend dashboard, swap to:
-      //     'The Automation Guys <demo@theautomationguys.com>'
-      from: 'The Automation Guys <onboarding@resend.dev>',
-      to: [normalized],
+    const senderAddress = process.env.GMAIL_USER!;
+
+    await transporter.sendMail({
+      from: `"The Automation Guys" <${senderAddress}>`,
+      to: normalized,
       subject: 'Your automation just ran ✅',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #111;">
@@ -169,16 +180,9 @@ export async function POST(req: Request) {
       `,
     });
 
-    if (error) {
-      console.error('[demo-send] Resend error:', error);
-      return NextResponse.json(
-        { error: 'Failed to send email. Please try again.' },
-        { status: 500 },
-      );
-    }
-
     emailDedupe.set(normalized, now);
     return NextResponse.json({ success: true });
+
   } catch (err: unknown) {
     console.error('[demo-send] Unhandled error:', err);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
