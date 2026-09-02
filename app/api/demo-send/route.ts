@@ -144,7 +144,10 @@ export async function POST(req: Request) {
     }
 
     const { error } = await resend.emails.send({
-      from: 'The Automation Guys <demo@theautomationguys.com>',
+      // ⚠️  Using Resend's pre-verified sender so this works without domain setup.
+      //     Once you verify theautomationguys.com in the Resend dashboard, swap to:
+      //     'The Automation Guys <demo@theautomationguys.com>'
+      from: 'The Automation Guys <onboarding@resend.dev>',
       to: [normalized],
       subject: 'Your automation just ran ✅',
       html: `
