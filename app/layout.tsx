@@ -121,77 +121,274 @@ export default function RootLayout({
         />
         {/* Preloader styles — pure CSS, renders instantly on first paint */}
         <style dangerouslySetInnerHTML={{ __html: `
+          /* ── Reset & base ──────────────────────────────────────────────── */
           #preloader {
+            --pl-progress: 0%;
             position: fixed; inset: 0; z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #0a0a0a;
-            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: #0A0A0A;
+            overflow: hidden;
+            transition: none;
           }
-          #preloader.preloader-exit {
-            opacity: 0; transform: translateY(-30px); filter: blur(8px);
+
+          /* ── Grid texture ──────────────────────────────────────────────── */
+          #preloader::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+              linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
             pointer-events: none;
           }
-          .pl-spinner {
-            position: relative; width: 80px; height: 80px; margin-bottom: 32px;
+
+          /* ── Blue radial glow orb ──────────────────────────────────────── */
+          #preloader::after {
+            content: '';
+            position: absolute;
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; height: 400px;
+            background: radial-gradient(ellipse at center, rgba(59,130,246,0.12) 0%, transparent 70%);
+            pointer-events: none;
+            animation: pl-orb-pulse 3s ease-in-out infinite;
           }
-          .pl-ring-outer {
-            position: absolute; inset: 0; border-radius: 50%;
-            border: 2px solid transparent; border-top-color: #3B82F6;
-            animation: pl-spin 1.8s linear infinite;
+
+          /* ── Corner accent lines ───────────────────────────────────────── */
+          .pl-corner {
+            position: absolute;
+            width: 40px; height: 40px;
+            border-color: rgba(59,130,246,0.4);
+            border-style: solid;
           }
-          .pl-ring-inner {
-            position: absolute; inset: 10px; border-radius: 50%;
-            border: 2px solid transparent; border-bottom-color: rgba(255,255,255,0.7);
-            animation: pl-spin 1.4s linear infinite reverse;
+          .pl-corner-tl { top: 32px; left: 32px; border-width: 1px 0 0 1px; }
+          .pl-corner-tr { top: 32px; right: 32px; border-width: 1px 1px 0 0; }
+          .pl-corner-bl { bottom: 32px; left: 32px; border-width: 0 0 1px 1px; }
+          .pl-corner-br { bottom: 32px; right: 32px; border-width: 0 1px 1px 0; }
+
+          /* ── Status line (top) ─────────────────────────────────────────── */
+          .pl-status-line {
+            position: absolute; top: 36px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px;
+            font-family: 'SF Mono', ui-monospace, monospace;
+            font-size: 10px; letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.25);
+            white-space: nowrap;
+            opacity: 0;
+            animation: pl-fade-in 0.6s ease 0.4s both;
           }
-          .pl-dot {
-            position: absolute; top: 50%; left: 50%;
-            width: 10px; height: 10px; margin: -5px 0 0 -5px;
-            border-radius: 50%; background: #3B82F6;
-            box-shadow: 0 0 14px #3B82F6;
-            animation: pl-pulse 1.5s ease-in-out infinite;
+          .pl-status-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #3B82F6;
+            box-shadow: 0 0 8px #3B82F6;
+            animation: pl-blink 1.2s ease-in-out infinite;
           }
-          .pl-title {
-            font-size: 13px; letter-spacing: 0.3em; color: #ffffff;
-            font-weight: 700; font-family: system-ui, -apple-system, sans-serif;
+
+          /* ── Main logo wordmark ────────────────────────────────────────── */
+          .pl-logo-wrap {
+            position: relative; z-index: 1;
+            text-align: center;
+            margin-bottom: 12px;
           }
-          .pl-sub {
-            font-size: 11px; letter-spacing: 0.2em; color: #71717a;
-            font-weight: 500; margin-top: 8px;
+          .pl-logo-the {
+            font-family: ui-monospace, 'SF Mono', monospace;
+            font-size: 11px; letter-spacing: 0.35em;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            display: block; margin-bottom: 10px;
+            opacity: 0;
+            animation: pl-fade-in 0.5s ease 0.1s both;
+          }
+          .pl-logo-letters {
+            display: flex; gap: 2px;
+            justify-content: center; align-items: baseline;
+            flex-wrap: nowrap;
+          }
+          .pl-letter {
             font-family: system-ui, -apple-system, sans-serif;
-            animation: pl-fade-in 0.5s ease 0.3s both;
+            font-size: clamp(22px, 5vw, 42px);
+            font-weight: 800;
+            color: #F2F2F0;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(18px);
+            animation: pl-letter-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+          }
+          .pl-letter.space { width: 14px; }
+          /* Stagger each letter */
+          .pl-letter:nth-child(1)  { animation-delay: 0.10s; }
+          .pl-letter:nth-child(2)  { animation-delay: 0.14s; }
+          .pl-letter:nth-child(3)  { animation-delay: 0.18s; }
+          .pl-letter:nth-child(4)  { animation-delay: 0.24s; } /* space */
+          .pl-letter:nth-child(5)  { animation-delay: 0.28s; }
+          .pl-letter:nth-child(6)  { animation-delay: 0.32s; }
+          .pl-letter:nth-child(7)  { animation-delay: 0.36s; }
+          .pl-letter:nth-child(8)  { animation-delay: 0.40s; }
+          .pl-letter:nth-child(9)  { animation-delay: 0.44s; }
+          .pl-letter:nth-child(10) { animation-delay: 0.48s; }
+          .pl-letter:nth-child(11) { animation-delay: 0.52s; }
+          .pl-letter:nth-child(12) { animation-delay: 0.56s; }
+          .pl-letter:nth-child(13) { animation-delay: 0.60s; } /* space */
+          .pl-letter:nth-child(14) { animation-delay: 0.64s; }
+          .pl-letter:nth-child(15) { animation-delay: 0.68s; }
+          .pl-letter:nth-child(16) { animation-delay: 0.72s; }
+          .pl-letter:nth-child(17) { animation-delay: 0.76s; }
+          /* Blue accent on GUYS */
+          .pl-letter:nth-child(14),
+          .pl-letter:nth-child(15),
+          .pl-letter:nth-child(16),
+          .pl-letter:nth-child(17) { color: #3B82F6; }
+
+          /* ── Tagline ───────────────────────────────────────────────────── */
+          .pl-tagline {
+            font-family: ui-monospace, 'SF Mono', monospace;
+            font-size: 10px; letter-spacing: 0.25em;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            margin-top: 10px;
+            position: relative; z-index: 1;
+            opacity: 0;
+            animation: pl-fade-in 0.6s ease 0.9s both;
+          }
+
+          /* ── Progress bar ──────────────────────────────────────────────── */
+          .pl-bar-wrap {
+            position: relative; z-index: 1;
+            margin-top: 48px;
+            width: min(280px, 70vw);
+          }
+          .pl-bar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+            font-family: ui-monospace, 'SF Mono', monospace;
+            font-size: 9px; letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.2);
+            opacity: 0;
+            animation: pl-fade-in 0.5s ease 0.7s both;
+          }
+          .pl-pct {
+            color: rgba(59,130,246,0.7);
+            font-variant-numeric: tabular-nums;
           }
           .pl-bar-track {
-            width: 180px; height: 2px; background: #27272a;
-            border-radius: 2px; overflow: hidden; margin-top: 40px;
+            width: 100%; height: 2px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 2px; overflow: hidden;
+            opacity: 0;
+            animation: pl-fade-in 0.5s ease 0.7s both;
           }
           .pl-bar-fill {
-            height: 100%; width: 0; background: #3B82F6;
-            box-shadow: 0 0 10px #3B82F6;
-            animation: pl-progress 8s cubic-bezier(0.1, 0.5, 0.3, 1) forwards;
+            height: 100%;
+            width: var(--pl-progress);
+            background: linear-gradient(90deg, #1D4ED8, #3B82F6, #60A5FA);
+            box-shadow: 0 0 12px rgba(59,130,246,0.7);
+            border-radius: 2px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           }
-          @keyframes pl-spin { to { transform: rotate(360deg); } }
-          @keyframes pl-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.25); opacity: 1; }
+          /* Leading glow dot on the fill */
+          .pl-bar-fill::after {
+            content: '';
+            position: absolute; top: -3px; right: 0;
+            width: 6px; height: 8px;
+            background: #60A5FA;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 3px rgba(96,165,250,0.9);
+            opacity: 1;
           }
-          @keyframes pl-progress { to { width: 100%; } }
-          @keyframes pl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+          /* ── Bottom tagline ────────────────────────────────────────────── */
+          .pl-footer {
+            position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+            font-family: ui-monospace, 'SF Mono', monospace;
+            font-size: 9px; letter-spacing: 0.25em;
+            color: rgba(255,255,255,0.12);
+            white-space: nowrap;
+            opacity: 0;
+            animation: pl-fade-in 0.6s ease 1s both;
+          }
+
+          /* ── Loading phase (after 0.6s) — pct counter updates ──────────── */
+          #preloader.pl-phase-loading .pl-pct {
+            animation: pl-pct-count 0.3s ease;
+          }
+
+          /* ── Exit / reveal phase ───────────────────────────────────────── */
+          #preloader.pl-phase-done {
+            animation: pl-reveal 0.85s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+            pointer-events: none;
+          }
+
+          /* ── Keyframes ─────────────────────────────────────────────────── */
+          @keyframes pl-letter-in {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes pl-fade-in {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+          }
+          @keyframes pl-orb-pulse {
+            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+            50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.08); }
+          }
+          @keyframes pl-blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.2; }
+          }
+          @keyframes pl-reveal {
+            0%   { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0);   clip-path: inset(0 0 0 0); }
+            40%  { opacity: 1; transform: translateY(-8px) scale(1.01); filter: blur(0);   clip-path: inset(0 0 0 0); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.04); filter: blur(12px); clip-path: inset(0 0 100% 0); }
+          }
         `}} />
       </head>
       <body className="relative bg-[var(--bg-color)] text-[var(--text-primary)] antialiased selection:bg-[#3B82F6] selection:text-white font-sans overflow-x-hidden transition-colors duration-300" style={{ overflow: 'hidden' }}>
-        {/* Pure HTML/CSS preloader — zero JS, renders on first paint */}
-        <div id="preloader" aria-hidden="true">
-          <div className="pl-spinner">
-            <div className="pl-ring-outer" />
-            <div className="pl-ring-inner" />
-            <div className="pl-dot" />
+        {/* Cinematic preloader — zero JS, renders on first paint, driven by CSS vars */}
+        <div id="preloader" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-label="Loading The Automation Guys">
+          {/* Corner accents */}
+          <div className="pl-corner pl-corner-tl" aria-hidden="true" />
+          <div className="pl-corner pl-corner-tr" aria-hidden="true" />
+          <div className="pl-corner pl-corner-bl" aria-hidden="true" />
+          <div className="pl-corner pl-corner-br" aria-hidden="true" />
+
+          {/* Top status */}
+          <div className="pl-status-line" aria-hidden="true">
+            <div className="pl-status-dot" />
+            <span>INITIALIZING SYSTEMS</span>
           </div>
-          <div className="pl-title">THE AUTOMATION GUYS</div>
-          <div className="pl-sub">INITIALIZING SYSTEMS...</div>
-          <div className="pl-bar-track">
-            <div className="pl-bar-fill" />
+
+          {/* Brand wordmark — letter by letter */}
+          <div className="pl-logo-wrap" aria-label="The Automation Guys">
+            <span className="pl-logo-the" aria-hidden="true">EST. 2025</span>
+            <div className="pl-logo-letters" aria-hidden="true">
+              {'AUTOMATION'.split('').map((ch, i) => (
+                <span key={i} className="pl-letter">{ch}</span>
+              ))}
+              <span className="pl-letter space" />
+              {'GUYS'.split('').map((ch, i) => (
+                <span key={i + 11} className="pl-letter">{ch}</span>
+              ))}
+            </div>
           </div>
+
+          {/* Tagline */}
+          <div className="pl-tagline" aria-hidden="true">Operations, Rewired</div>
+
+          {/* Progress bar */}
+          <div className="pl-bar-wrap" aria-hidden="true">
+            <div className="pl-bar-header">
+              <span>LOADING</span>
+              <span className="pl-pct" id="pl-pct-display">0%</span>
+            </div>
+            <div className="pl-bar-track">
+              <div className="pl-bar-fill" />
+            </div>
+          </div>
+
+          {/* Bottom text */}
+          <div className="pl-footer" aria-hidden="true">THE AUTOMATION GUYS · theautomationguys.com</div>
         </div>
 
         <PreloaderDismiss />
