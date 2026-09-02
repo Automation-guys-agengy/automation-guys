@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { CustomCursor } from '@/components/CustomCursor'
+import { PreloaderDismiss } from '@/components/Preloader'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -118,8 +119,82 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Preloader styles — pure CSS, renders instantly on first paint */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          #preloader {
+            position: fixed; inset: 0; z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #0a0a0a;
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
+          }
+          #preloader.preloader-exit {
+            opacity: 0; transform: translateY(-30px); filter: blur(8px);
+            pointer-events: none;
+          }
+          .pl-spinner {
+            position: relative; width: 80px; height: 80px; margin-bottom: 32px;
+          }
+          .pl-ring-outer {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 2px solid transparent; border-top-color: #3B82F6;
+            animation: pl-spin 1.8s linear infinite;
+          }
+          .pl-ring-inner {
+            position: absolute; inset: 10px; border-radius: 50%;
+            border: 2px solid transparent; border-bottom-color: rgba(255,255,255,0.7);
+            animation: pl-spin 1.4s linear infinite reverse;
+          }
+          .pl-dot {
+            position: absolute; top: 50%; left: 50%;
+            width: 10px; height: 10px; margin: -5px 0 0 -5px;
+            border-radius: 50%; background: #3B82F6;
+            box-shadow: 0 0 14px #3B82F6;
+            animation: pl-pulse 1.5s ease-in-out infinite;
+          }
+          .pl-title {
+            font-size: 13px; letter-spacing: 0.3em; color: #ffffff;
+            font-weight: 700; font-family: system-ui, -apple-system, sans-serif;
+          }
+          .pl-sub {
+            font-size: 11px; letter-spacing: 0.2em; color: #71717a;
+            font-weight: 500; margin-top: 8px;
+            font-family: system-ui, -apple-system, sans-serif;
+            animation: pl-fade-in 0.5s ease 0.3s both;
+          }
+          .pl-bar-track {
+            width: 180px; height: 2px; background: #27272a;
+            border-radius: 2px; overflow: hidden; margin-top: 40px;
+          }
+          .pl-bar-fill {
+            height: 100%; width: 0; background: #3B82F6;
+            box-shadow: 0 0 10px #3B82F6;
+            animation: pl-progress 8s cubic-bezier(0.1, 0.5, 0.3, 1) forwards;
+          }
+          @keyframes pl-spin { to { transform: rotate(360deg); } }
+          @keyframes pl-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.25); opacity: 1; }
+          }
+          @keyframes pl-progress { to { width: 100%; } }
+          @keyframes pl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        `}} />
       </head>
-      <body className="relative bg-[var(--bg-color)] text-[var(--text-primary)] antialiased selection:bg-[#3B82F6] selection:text-white font-sans overflow-x-hidden transition-colors duration-300">
+      <body className="relative bg-[var(--bg-color)] text-[var(--text-primary)] antialiased selection:bg-[#3B82F6] selection:text-white font-sans overflow-x-hidden transition-colors duration-300" style={{ overflow: 'hidden' }}>
+        {/* Pure HTML/CSS preloader — zero JS, renders on first paint */}
+        <div id="preloader" aria-hidden="true">
+          <div className="pl-spinner">
+            <div className="pl-ring-outer" />
+            <div className="pl-ring-inner" />
+            <div className="pl-dot" />
+          </div>
+          <div className="pl-title">THE AUTOMATION GUYS</div>
+          <div className="pl-sub">INITIALIZING SYSTEMS...</div>
+          <div className="pl-bar-track">
+            <div className="pl-bar-fill" />
+          </div>
+        </div>
+
+        <PreloaderDismiss />
         <ThemeProvider>
           {/* Global Background Gridlines Overlay */}
           <div
@@ -134,3 +209,4 @@ export default function RootLayout({
     </html>
   )
 }
+

@@ -4,23 +4,52 @@ import dynamic from 'next/dynamic'
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
 import { TrustStrip } from '@/components/TrustStrip'
-import { FrictionSection } from '@/components/FrictionSection'
-import { ShiftSection } from '@/components/ShiftSection'
-import { SystemsGrid } from '@/components/SystemsGrid'
-import { MethodSection } from '@/components/MethodSection'
-import { OutcomeSection } from '@/components/OutcomeSection'
-import { ClosingCTA } from '@/components/ClosingCTA'
-import { Footer } from '@/components/Footer'
-import { DevtoolsEasterEgg } from '@/components/DevtoolsEasterEgg'
 import { SectionDivider } from '@/components/ui/SectionDivider'
-import { LiveDemoSection } from '@/components/ui/LiveDemoSection'
 
-// Dynamic import for heavy GSAP video pin reveal component
+
+// Dynamic imports for code splitting — JS bundles load in parallel
+// but all mount immediately so the full page is ready before loader dismisses
+const FrictionSection = dynamic(
+  () => import('@/components/FrictionSection').then((m) => m.FrictionSection),
+  { ssr: false }
+)
+const ShiftSection = dynamic(
+  () => import('@/components/ShiftSection').then((m) => m.ShiftSection),
+  { ssr: false }
+)
+const LiveDemoSection = dynamic(
+  () => import('@/components/ui/LiveDemoSection').then((m) => m.LiveDemoSection),
+  { ssr: false }
+)
 const HeroScrollVideoReveal = dynamic(
   () =>
     import('@/components/ui/hero-scroll-video-pin-reveal').then(
       (mod) => mod.HeroScrollVideoReveal
     ),
+  { ssr: false }
+)
+const SystemsGrid = dynamic(
+  () => import('@/components/SystemsGrid').then((m) => m.SystemsGrid),
+  { ssr: false }
+)
+const MethodSection = dynamic(
+  () => import('@/components/MethodSection').then((m) => m.MethodSection),
+  { ssr: false }
+)
+const OutcomeSection = dynamic(
+  () => import('@/components/OutcomeSection').then((m) => m.OutcomeSection),
+  { ssr: false }
+)
+const ClosingCTA = dynamic(
+  () => import('@/components/ClosingCTA').then((m) => m.ClosingCTA),
+  { ssr: false }
+)
+const Footer = dynamic(
+  () => import('@/components/Footer').then((m) => m.Footer),
+  { ssr: false }
+)
+const DevtoolsEasterEgg = dynamic(
+  () => import('@/components/DevtoolsEasterEgg').then((m) => m.DevtoolsEasterEgg),
   { ssr: false }
 )
 
@@ -50,7 +79,6 @@ export default function Page() {
       <LiveDemoSection />
 
       <SectionDivider text="SYSTEM ARCHITECTURE /// " reverse={true} />
-      {/* Kinetic Scroller Pin Reveal Section */}
       <HeroScrollVideoReveal
         headingText={
           <>
