@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 /* ------------------------------------------------------------------ */
 /*  Configuration                                                      */
@@ -57,23 +57,14 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Gmail SMTP Transporter (lazy — avoids crash if env vars missing)   */
+/*  Resend Client (lazy — avoids crash if key is missing)              */
 /* ------------------------------------------------------------------ */
 
-let _transporter: nodemailer.Transporter | null = null;
-
-function getTransporter(): nodemailer.Transporter | null {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
-  if (!user || !pass) return null;
-
-  if (!_transporter) {
-    _transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user, pass },
-    });
-  }
-  return _transporter;
+let _resend: Resend | null = null;
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null;
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
 }
 
 /* ------------------------------------------------------------------ */
@@ -100,7 +91,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email format.' }, { status: 400 });
     }
 
-    // 4. Disposable domain rejection
+    // 4. Disposable domain rejection (O(1) Set lookup)
     const domain = email.split('@')[1]?.toLowerCase();
     if (domain && DISPOSABLE_DOMAINS.has(domain)) {
       return NextResponse.json(
@@ -142,24 +133,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // 7. Send via Gmail SMTP (or mock if env vars not set)
-    const transporter = getTransporter();
+    // 7. Send via Resend (or mock if API key is missing)
+    const resend = getResend();
 
-    if (!transporter) {
-      // Dev/demo mode: mock so the frontend animation still runs
+    if (!resend) {
+      // Dev mode: mock so the frontend animation still runs
       emailDedupe.set(normalized, now);
       await new Promise((r) => setTimeout(r, 700));
       return NextResponse.json({
         success: true,
-        message: 'Email sent (mocked — GMAIL_USER / GMAIL_APP_PASSWORD not set).',
+        message: 'Email sent (mocked — no RESEND_API_KEY set).',
       });
     }
 
-    const senderAddress = process.env.GMAIL_USER!;
-
-    await transporter.sendMail({
-      from: `"The Automation Guys" <${senderAddress}>`,
-      to: normalized,
+    // Using Resend's shared sender — works without a verified custom domain.
+    // When you add & verify a domain in Resend, replace with your own address.
+    const { error } = await resend.emails.send({
+      from: 'The Automation Guys <onboarding@resend.dev>',
+      to: [normalized],
       subject: 'Your automation just ran ✅',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 32px 24px; color: #111;">
@@ -179,6 +170,14 @@ export async function POST(req: Request) {
         </div>
       `,
     });
+
+    if (error) {
+      console.error('[demo-send] Resend error:', error);
+      return NextResponse.json(
+        { error: 'Failed to send email. Please try again.' },
+        { status: 500 },
+      );
+    }
 
     emailDedupe.set(normalized, now);
     return NextResponse.json({ success: true });
