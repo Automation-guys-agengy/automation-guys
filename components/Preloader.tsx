@@ -61,8 +61,8 @@ export function PreloaderDismiss() {
     // ── Window fully loaded ───────────────────────────────────────────────
     const onLoad = () => {
       advanceTo(80)
-      // Give 500 ms for hydration / shader compile
-      setTimeout(() => advanceTo(90), 500)
+      // Give 1s for hydration / shader compile before jumping to 90%
+      setTimeout(() => advanceTo(90), 1000)
     }
 
     if (document.readyState === 'complete') {
@@ -88,10 +88,10 @@ export function PreloaderDismiss() {
       }, 400)
     }
 
-    // Ideal: dismiss ~1.2 s after load (enough for shader / hydration)
+    // Dismiss 2 s after load — gives the page time to settle visually
     const loadDismissTimer = (() => {
       let t: ReturnType<typeof setTimeout>
-      const schedule = () => { t = setTimeout(dismiss, 1200) }
+      const schedule = () => { t = setTimeout(dismiss, 2000) }
       if (document.readyState === 'complete') {
         schedule()
       } else {
